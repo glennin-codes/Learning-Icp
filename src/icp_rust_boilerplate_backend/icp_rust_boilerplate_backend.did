@@ -1,3 +1,30 @@
+type ApiResponse = record {
+  data : opt vec Message;
+  logs : vec text;
+  error : opt MyError;
+};
+type Message = record {
+  id : nat64;
+  title : text;
+  updated_at : opt nat64;
+  attachement_url : text;
+  body : text;
+  created_at : nat64;
+};
+type MessagePayload = record {
+  title : text;
+  body : text;
+  attachment_url : text;
+};
+type MyError = variant {
+  NotFound : record { msg : text };
+  SerializationError : record { msg : text };
+};
+type Result = variant { Ok : Message; Err : MyError };
 service : {
-    "greet": (text) -> (text) query;
+  add_message : (MessagePayload) -> (opt Message);
+  delete_message : (nat64) -> (Result);
+  get_all_messages : () -> (ApiResponse) query;
+  get_message : (nat64) -> (Result) query;
+  update_message : (nat64, MessagePayload) -> (Result);
 }
